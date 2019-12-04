@@ -76,6 +76,7 @@ public class CodePush implements ReactPackage {
         }
 
         mCurrentInstance = this;
+        mPublicKey = getPublicKeyIfExist();
 
         clearDebugCacheIfNeeded(null);
         initializeUpdateAfterRestart();
@@ -117,6 +118,25 @@ public class CodePush implements ReactPackage {
         if (publicKey.isEmpty()) {
             throw new CodePushInvalidPublicKeyException("Specified public key is empty");
         }
+        return publicKey;
+    }
+
+    private String getPublicKeyIfExist(){
+        String publicKey;
+      
+        String packageName = mContext.getPackageName();
+        int resId = mContext.getResources().getIdentifier("CodePushPublicKey", "string", packageName);
+        
+        if(resId != 0) {
+            publicKey = mContext.getString(resId);
+
+            if (publicKey.isEmpty()) {
+                throw new CodePushInvalidPublicKeyException("Public key is empty");
+            }
+        } else {
+            publicKey = null;
+        }
+
         return publicKey;
     }
 
